@@ -1,19 +1,23 @@
 const menuToggle = document.querySelector(".menu-toggle");
 const primaryNav = document.querySelector(".primary-nav");
 const languageToggle = document.querySelector(".nav-lang");
-let isAmharic = false;
+let currentLanguage = "so";
 
 const amharicTranslations = {
   "Open navigation": "የዳሰሳ ምናሌን ክፈት",
   "Close navigation": "የዳሰሳ ምናሌን ዝጋ",
   "Main navigation": "ዋና የዳሰሳ ምናሌ",
   "Sorella home": "የሶሬላ መነሻ",
+  "Restaurant and food photo gallery": "የምግብ ቤትና ምግብ ፎቶ ጋለሪ",
+  "Warm candlelit restaurant table set for dinner": "በሻማ ብርሃን የተዘጋጀ የምግብ ቤት ጠረጴዛ",
   "Translate to Amharic": "ወደ አማርኛ ተርጉም",
   "Switch to English": "ወደ እንግሊዝኛ ቀይር",
+  "Switch to Somali": "ወደ ሶማሊኛ ቀይር",
   "Our story": "ስለ እኛ",
   "The menu": "ምናሌ",
   "The space": "የምግብ ቤቱ",
   "Find us": "እኛን ያግኙ",
+  "Find us ↗": "እኛን ያግኙ ↗",
   "Book a table": "ጠረጴዛ ይያዙ",
   "A little corner of Italy in the city": "በከተማው ውስጥ ትንሽ የጣሊያን ማዕዘን",
   "Come for dinner.": "ለእራት ይምጡ።",
@@ -106,6 +110,8 @@ const amharicTranslations = {
   "Call us to book": "ለቦታ ማስያዝ ይደውሉ",
   "Made with amore, right here in the neighborhood.": "በፍቅር የተሰራ፣ እዚሁ በአካባቢያችን።",
   "Instagram": "ኢንስታግራም",
+  "TikTok": "ቲክቶክ",
+  "Telegram": "ቴሌግራም",
   "TikTok @sorella": "ቲክቶክ @sorella",
   "Telegram @sorella": "ቴሌግራም @sorella",
   "© 2025 SORELLA": "© 2025 ሶሬላ",
@@ -113,10 +119,126 @@ const amharicTranslations = {
   "Sorella is a neighborhood Italian restaurant for long lunches, candlelit dinners, and the moments in between.": "ሶሬላ ረጅም ምሳዎች፣ በሻማ ብርሃን የሚታጀቡ እራቶች እና በመካከላቸው ላሉ ውብ ጊዜያት የተዘጋጀ የአካባቢያችን የጣሊያን ምግብ ቤት ነው።"
 };
 
+const somaliTranslations = {
+  "Open navigation": "Fur hagidda",
+  "Close navigation": "Xir hagidda",
+  "Main navigation": "Hagidda ugu weyn",
+  "Sorella home": "Bogga hore ee Sorella",
+  "Restaurant and food photo gallery": "Sawirrada maqaayadda iyo cuntada",
+  "Warm candlelit restaurant table set for dinner": "Miiska maqaayadda ee shumacyadu u ifinayaan cashada",
+  "Translate to Amharic": "U beddel Amxaari",
+  "Switch to English": "U beddel Ingiriisi",
+  "Switch to Somali": "U beddel Af-Soomaali",
+  "Our story": "Sheekadeenna",
+  "The menu": "Liiska cuntada",
+  "The space": "Goobta",
+  "Find us": "Nala soo xiriir",
+  "Find us ↗": "Nala soo xiriir ↗",
+  "Book a table": "Miis sii qabso",
+  "A little corner of Italy in the city": "Qayb yar oo Talyaani ah oo magaalada ku taal",
+  "Come for dinner.": "Casho u kaalay.",
+  "Stay for the feeling.": "U joog jawiga wanaagsan.",
+  "Handmade pasta, good wine, and a table that always has room for one more.": "Baasto gacanta lagu sameeyey, khamri wanaagsan, iyo miis mar walba qof kale boos u haya.",
+  "Find your table": "Miiskaaga hel",
+  "Get to know us": "Wax badan naga baro",
+  "EST. 2018": "La aasaasay 2018",
+  "MADE WITH AMORE": "Jacayl lagu sameeyey",
+  "Scroll to our story": "U rog sheekadeenna",
+  "SCROLL A LITTLE": "Wax yar hoos u rog",
+  "FATTO CON": "Lagu sameeyey",
+  "AMORE": "Jacayl",
+  "Benvenuti, you're home": "Soo dhowow, gurigaaga ayaad joogtaa",
+  "Somewhere between": "Meel u dhexaysa",
+  "your place": "gurigaaga",
+  "and ours.": "iyo kaayaga.",
+  "Sorella started with a simple idea: the best nights are never rushed. So we make the pasta by hand, pour one more glass, and save you a seat at the table. Italian at heart, right at home in the neighborhood.": "Sorella waxay ku bilaabatay fikrad fudud: habeenada ugu wanaagsan laguma degdego. Sidaas darteed baastada gacanta ayaan ku samaynaa, koob kale ayaan kuu shubnaa, miiskana meel ayaan kuugu reebnaa. Qalbi ahaan Talyaani, xaafaddana gurigaaga ayay kula tahay.",
+  "Take a look around": "Hareeraha eeg",
+  "Friends sharing dinner at a warmly lit restaurant": "Saaxiibo casho ku wadaagaya maqaayad iftiin diirran leh",
+  "Good food. Better company.": "Cunto wanaagsan. Wehel ka sii wanaagsan.",
+  "Fresh handmade pasta with seasonal ingredients": "Baasto cusub oo gacanta lagu sameeyey, laguna daray waxyaabaha xilliga la helo",
+  "Straight from our kitchen": "Si toos ah jikadayada",
+  "A little flour.": "Bur yar.",
+  "A lot of love.": "Jacayl badan.",
+  "Rolled, shaped, and finished by hand. Our menu follows the seasons, takes the scenic route through Italy, and always leaves room for dessert.": "Gacanta ayaa lagu fidiyey, qaabeeyey, laguna dhammeeyey. Liiskayagu wuxuu raacaa xilliyada, wuxuu kuu soo bandhigaa dhadhanka Talyaaniga, mar walbana meel macmacaan ah ayuu u reebaa.",
+  "Brown butter ravioli": "Baasto la buuxiyey oo subag bunni ah leh",
+  "sage · hazelnut · parmesan": "Caleen sage ah · laws geedeed · farmaajo parmesan ah",
+  "Sunday ragù pappardelle": "Baasto ballaadhan oo maraq hilibka Axadda leh",
+  "slow-braised beef · pecorino": "Hilib lo'aad oo si tartiib ah loo kariyey · farmaajo pecorino ah",
+  "Antipasti": "Cuntooyinka bilowga",
+  "TO BEGIN": "BILOWGA",
+  "Bruschetta al pomodoro": "Bruschetta yaanyo leh",
+  "heirloom tomato · basil · grilled sourdough": "Yaanyo tayo gaar ah leh · caleen basil ah · rooti khamiir dabiici ah lagu dubay",
+  "Burrata & peaches": "Burrata iyo fersken",
+  "summer peach · arugula · aged balsamic": "Fersken xagaaga · caleen arugula ah · khal balsamic ah oo bislaaday",
+  "Pasta fatta a mano": "Baasto gacanta lagu sameeyey",
+  "FROM THE PASTA POT": "DHERIGA BAASTADA",
+  "Secondi": "Cuntooyinka waaweyn",
+  "THE MAIN EVENT": "CUNTADA UGU WEYN",
+  "Pollo alla griglia": "Digaag la dubay",
+  "herb-roasted chicken · lemon · capers": "Digaag geedo udgoon lagu dubay · liin · miro capers ah",
+  "Branzino al limone": "Kalluun branzino oo liin leh",
+  "pan-seared sea bass · fennel · lemon": "Kalluun bass ah oo digsiga lagu dubay · geed fennel ah · liin",
+  "Dolci": "Macmacaan",
+  "A LITTLE SOMETHING SWEET": "MACMACAAN YAR",
+  "Tiramisu della casa": "Tiramisu-ga guriga",
+  "espresso · mascarpone · cocoa": "Qaxwo espresso ah · farmaajo mascarpone ah · kookaha",
+  "Vanilla panna cotta": "Panna cotta vanilje leh",
+  "seasonal berries · honey": "Miro yaryar oo xilliyeed · malab",
+  "Reserve your table": "Miiskaaga sii qabso",
+  "A seat is waiting": "Kursi ayaa kuu diyaar ah",
+  "Make yourself": "Iska dhig",
+  "at home.": "inaad guriga joogto.",
+  "Long lunches, first dates, one more round.": "Qadooyin dhaadheer, ballamaha ugu horreeya, iyo wareeg kale.",
+  "There’s a little room for all of it.": "Dhammaantood meel yar baa loogu hayaa.",
+  "Beautifully plated Italian dinner in an intimate restaurant": "Casho Talyaani ah oo si qurux badan loo diyaariyey, kuna taal maqaayad raaxo leh",
+  "The table is yours": "Miisku adigaa leh",
+  "Fresh pasta being prepared with care": "Baasto cusub oo si taxaddar leh loo diyaarinayo",
+  "Made fresh, every day": "Maalin kasta cusub ayaa loo sameeyaa",
+  "The cozy dining room at Sorella": "Qolka cuntada ee raaxada leh ee Sorella",
+  "Your new favorite corner": "Meesha cusub ee aad ugu jeceshahay",
+  "Warm, welcoming restaurant interior ready for dinner": "Gudaha maqaayad diirran oo soo dhoweyn leh, cashona diyaar u ah",
+  "Room for one more": "Qof kale boos baa u bannaan",
+  "A bowl of fresh pasta with tomatoes and herbs": "Madiibad baasto cusub ah oo yaanyo iyo geedo udgoon leh",
+  "A little pasta, a lot of love": "Baasto yar, jacayl badan",
+  "Fresh seasonal Italian food served at the table": "Cunto Talyaani ah oo cusub, xilliyeed, miiskana laguugu keenayo",
+  "Seasonal and made to share": "Xilliyeed oo la wadaagi karo",
+  "A colorful plate of fresh food from the kitchen": "Saxan midab leh oo cunto cusub ah kana timid jikada",
+  "Five out of five stars": "Shan xiddigood shantii",
+  "“The kind of place that makes an ordinary Tuesday feel like a little celebration.”": "“Meel Talaadada caadiga ah ka dhigta xaflad yar.”",
+  "THE NEIGHBORHOOD LOVES US": "Xaafaddu way na jeceshahay",
+  "Read our reviews on Google": "Faallooyinkayaga Google ka akhri",
+  "Right around the corner": "Meel dhow",
+  "Come on": "Soo",
+  "over.": "booqo.",
+  "We’re easy to find and even easier to stay at. Pop in for a plate, a pour, or just to say ciao.": "Way fududahay inaad na hesho, joogitaankuna intaas wuu ka sii fudud yahay. U kaalay cunto, cabitaan, ama inaad nagu salaanto.",
+  "18 Little Italy Lane": "18 Little Italy Lane",
+  "New York, NY 10013": "New York, NY 10013",
+  "Every day, a good day": "Maalin kasta waa maalin wanaagsan",
+  "Lunch 12–3 · Dinner 5–10": "Qado 12–3 · Casho 5–10",
+  "Get directions": "Hel tilmaamaha jidka",
+  "Map showing Sorella in Little Italy, New York": "Khariidad muujinaysa Sorella ee Little Italy, New York",
+  "RIGHT HERE IN THE NEIGHBORHOOD": "HALKAN XAAFADDA DHEXDEEDA",
+  "Your table is waiting": "Miiskaagu wuu ku sugayaa",
+  "Good things happen": "Waxyaabo wanaagsan ayaa dhaca",
+  "around the table.": "miiska hareerihiisa.",
+  "Bring your appetite. We’ll take care of the rest.": "Rabitaanka cuntada la imow. Inta kale annagaa qabanayna.",
+  "Call us to book": "Na soo wac si aad u sii qabsato",
+  "Made with amore, right here in the neighborhood.": "Jacayl lagu sameeyey, halkan xaafadda dhexdeeda.",
+  "Instagram": "Instagram",
+  "TikTok": "TikTok",
+  "Telegram": "Telegram",
+  "TikTok @sorella": "TikTok @sorella",
+  "Telegram @sorella": "Telegram @sorella",
+  "© 2025 SORELLA": "© 2025 SORELLA",
+  "Sorella — Italian, with a little more soul": "Sorella — Talyaani leh dareen dheeraad ah",
+  "Sorella is a neighborhood Italian restaurant for long lunches, candlelit dinners, and the moments in between.": "Sorella waa maqaayad Talyaani ah oo xaafadda ku taal, kuna habboon qadooyin dhaadheer, cashooyin shumac leh, iyo waqtiyada dhexdooda."
+};
+
 const originalText = new WeakMap();
 const originalAttributes = new WeakMap();
 
-function translatePage(toAmharic) {
+function translatePage(language) {
+  const translations = language === "am" ? amharicTranslations : somaliTranslations;
   const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
   let textNode;
 
@@ -124,12 +246,12 @@ function translatePage(toAmharic) {
     if (!originalText.has(textNode)) originalText.set(textNode, textNode.nodeValue);
     const original = originalText.get(textNode);
     const trimmed = original.trim();
-    const translation = amharicTranslations[trimmed];
+    const translation = translations[trimmed];
     if (translation === undefined) continue;
 
     const leading = original.match(/^\s*/)[0];
     const trailing = original.match(/\s*$/)[0];
-    textNode.nodeValue = toAmharic
+    textNode.nodeValue = language !== "en"
       ? `${leading}${translation}${trailing}`
       : original;
   }
@@ -144,23 +266,25 @@ function translatePage(toAmharic) {
       }
       if (!(attribute in originals)) originals[attribute] = element.getAttribute(attribute);
       const original = originals[attribute];
-      element.setAttribute(attribute, toAmharic ? (amharicTranslations[original] || original) : original);
+      element.setAttribute(attribute, language === "en" ? original : (translations[original] || original));
     });
   });
 
-  document.documentElement.lang = toAmharic ? "am" : "en";
-  document.title = toAmharic
-    ? amharicTranslations["Sorella — Italian, with a little more soul"]
-    : "Sorella — Italian, with a little more soul";
-  document.querySelector('meta[name="description"]').content = toAmharic
-    ? amharicTranslations["Sorella is a neighborhood Italian restaurant for long lunches, candlelit dinners, and the moments in between."]
-    : "Sorella is a neighborhood Italian restaurant for long lunches, candlelit dinners, and the moments in between.";
+  document.documentElement.lang = language;
+  document.title = language === "en"
+    ? "Sorella — Italian, with a little more soul"
+    : translations["Sorella — Italian, with a little more soul"];
+  document.querySelector('meta[name="description"]').content = language === "en"
+    ? "Sorella is a neighborhood Italian restaurant for long lunches, candlelit dinners, and the moments in between."
+    : translations["Sorella is a neighborhood Italian restaurant for long lunches, candlelit dinners, and the moments in between."];
 }
 
 function closeMobileNav() {
   if (!menuToggle || !primaryNav) return;
   menuToggle.setAttribute("aria-expanded", "false");
-  menuToggle.setAttribute("aria-label", isAmharic ? "የዳሰሳ ምናሌን ክፈት" : "Open navigation");
+  menuToggle.setAttribute("aria-label", currentLanguage === "am"
+    ? amharicTranslations["Open navigation"]
+    : currentLanguage === "so" ? somaliTranslations["Open navigation"] : "Open navigation");
   primaryNav.classList.remove("is-open");
 }
 
@@ -170,9 +294,11 @@ if (menuToggle && primaryNav) {
     menuToggle.setAttribute("aria-expanded", String(!isExpanded));
     menuToggle.setAttribute(
       "aria-label",
-      isAmharic
-        ? (isExpanded ? "የዳሰሳ ምናሌን ክፈት" : "የዳሰሳ ምናሌን ዝጋ")
-        : (isExpanded ? "Open navigation" : "Close navigation")
+      currentLanguage === "am"
+        ? amharicTranslations[isExpanded ? "Open navigation" : "Close navigation"]
+        : currentLanguage === "so"
+          ? somaliTranslations[isExpanded ? "Open navigation" : "Close navigation"]
+          : (isExpanded ? "Open navigation" : "Close navigation")
     );
     primaryNav.classList.toggle("is-open", !isExpanded);
   });
@@ -184,14 +310,28 @@ if (menuToggle && primaryNav) {
 
 if (languageToggle) {
   languageToggle.addEventListener("click", () => {
-    isAmharic = !isAmharic;
-    translatePage(isAmharic);
-    languageToggle.textContent = isAmharic ? "English" : "አማርኛ";
-    languageToggle.setAttribute("aria-label", isAmharic ? "Switch to English" : "Translate to Amharic");
-    languageToggle.setAttribute("title", isAmharic ? "Switch to English" : "Translate to Amharic");
+    currentLanguage = { so: "en", en: "am", am: "so" }[currentLanguage];
+    translatePage(currentLanguage);
+    const nextLanguage = { so: "en", en: "am", am: "so" }[currentLanguage];
+    const nextLanguageLabel = { en: "English", am: "አማርኛ", so: "Af-Soomaali" }[nextLanguage];
+    const switchLabel = {
+      en: "Switch to English",
+      am: "Translate to Amharic",
+      so: "Switch to Somali"
+    }[nextLanguage];
+    const translations = currentLanguage === "am"
+      ? amharicTranslations
+      : currentLanguage === "so" ? somaliTranslations : {};
+    const localizedSwitchLabel = translations[switchLabel] || switchLabel;
+    languageToggle.textContent = nextLanguageLabel;
+    languageToggle.setAttribute("aria-label", localizedSwitchLabel);
+    languageToggle.setAttribute("title", localizedSwitchLabel);
     closeMobileNav();
   });
 }
+
+translatePage(currentLanguage);
+languageToggle.textContent = "English";
 
 const revealItems = document.querySelectorAll(".reveal");
 
